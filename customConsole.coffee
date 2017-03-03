@@ -4,13 +4,13 @@ Template.customConsole.onCreated ->
   @position = new ReactiveVar '-2em'
   @toggle = => if @open.get() then @hide() else @show()
   @show = =>
-    console.log 'showing'
+    #console.log 'showing'
     @open.set true
     @opacity.set '0.6'
     @position.set '0'
     @focus()
   @hide = =>
-    console.log 'hiding'
+    #console.log 'hiding'
     @open.set false
     @opacity.set '0.6'
     @position.set '-2em'
@@ -21,6 +21,11 @@ Template.customConsole.onCreated ->
   window.customConsole ?= new Console()
   customConsole.ui = @
 
+  $(document).on 'keyup', (event) ->
+    if event.which is 220
+      event.preventDefault()
+      customConsole.ui.toggle()
+
 Template.customConsole.onRendered -> customConsole.linkInput '#cl'
 
 Template.customConsole.helpers
@@ -28,6 +33,7 @@ Template.customConsole.helpers
   opacity: -> Template.instance().opacity.get()
 
 Template.customConsole.events
+  "keyup input": (event, instance) -> event.stopPropagation() unless event.which is 220
   "keydown input": (event, instance) ->
     switch event.which
       when 220 #toggle console key

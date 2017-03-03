@@ -1,6 +1,6 @@
 Package.describe({
   name: 'pangolinrex:custom-console',
-  version: '0.0.1',
+  version: '0.0.2',
   summary: 'A custom repl console',
   git: 'https://github.com/hartreed/custom-console.git',
   documentation: 'README.md'
@@ -26,5 +26,7 @@ Package.onUse(function(api) {
 Package.onTest(function(api) {
   api.use('ecmascript');
   api.use('tinytest');
-  api.mainModule('custom-console-tests.js');
+  try {
+    api.mainModule('custom-console-tests.js');
+  } catch (error) {}
 });

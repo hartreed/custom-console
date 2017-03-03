@@ -1,14 +1,14 @@
 root = exports ? this
 
 class Group
-  constructor: (@name, @commands = {}) ->
+  constructor: (@name, @commands = {}, @logging = false) ->
   command: (name, hook) -> @commands[name] = hook
   execute: (name, args) ->
     command = @commands[name]
     if command?
       command args
     else if @commands.default?
-      @commands.default args
+      @commands.default name, args
     else console.log "group #{@name} does not have a command named #{name}"
 
 root.Console = class Console
@@ -34,6 +34,13 @@ root.Console = class Console
   addGroup: (name, commands) ->
     @groups[name] = new Group name, commands
     return @ #chain
+
+  addDefault: (group, callback) ->
+    if group is 'main'
+      @main.commands.default = callback
+    else if @groups[group]?
+      @groups[group].commands.default = callback
+    else console.log 'no group found named', group
 
   group: (name) ->
     group = @groups[name]
@@ -61,7 +68,7 @@ root.Console = class Console
 
   execute: (command) ->
     @history.unshift command if @history[0] isnt command
-    console.log "command entered: #{command}"
+    console.log "command entered: #{command}" if @logging
     @clear()
     @cursor = -1
     @parse command
