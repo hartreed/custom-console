@@ -25,7 +25,9 @@ root.Console = class Console
     @input.val @history[@cursor]
     #console.log @cursor
 
-  clear: -> @input.val ''
+  clear: ->
+    @input.val ''
+    return @
 
   command: (name, hook) ->
     @main.command name, hook
@@ -42,11 +44,15 @@ root.Console = class Console
       @groups[group].commands.default = callback
     else console.log 'no group found named', group
 
+    return @ #chain
+
   group: (name) ->
     group = @groups[name]
     if group? then return group else return null
 
-  setMessage: (message) -> @input.val message
+  setMessage: (message) ->
+    @input.val message
+    return @
 
   prev: ->
     if @history.length > @cursor + 1
@@ -72,6 +78,7 @@ root.Console = class Console
     @clear()
     @cursor = -1
     @parse command
+    return @
 
   parse: (command) ->
     commands = command.split(', ')
